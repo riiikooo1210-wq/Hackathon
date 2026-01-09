@@ -149,8 +149,9 @@ struct AuthButton: View {
         case primary, secondary, outline
     }
 
+    @ViewBuilder
     var body: some View {
-        Button(action: action) {
+        let content = Button(action: action) {
             HStack(spacing: theme.spacing.md) {
                 Image(systemName: icon)
                     .font(.title3)
@@ -159,19 +160,12 @@ struct AuthButton: View {
                     .fontWeight(.semibold)
             }
         }
-        .modifier(buttonModifier)
-    }
 
-    @ViewBuilder
-    private var buttonModifier: some View {
         switch style {
         case .primary:
-            photoboothPrimaryButton()
-        case .secondary:
-            photoboothSecondaryButton()
-        case .outline:
-            // Outline style uses secondary button with border
-            photoboothSecondaryButton()
+            content.photoboothPrimaryButton()
+        case .secondary, .outline:
+            content.photoboothSecondaryButton()
         }
     }
 }
