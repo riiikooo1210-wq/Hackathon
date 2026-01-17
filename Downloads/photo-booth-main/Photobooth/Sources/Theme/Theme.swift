@@ -1,5 +1,22 @@
 import SwiftUI
 
+// MARK: - Color Hex Extension
+extension Color {
+    init(hex: String) {
+        var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
+
+        var rgb: UInt64 = 0
+        Scanner(string: hexSanitized).scanHexInt64(&rgb)
+
+        let r = Double((rgb & 0xFF0000) >> 16) / 255.0
+        let g = Double((rgb & 0x00FF00) >> 8) / 255.0
+        let b = Double(rgb & 0x0000FF) / 255.0
+
+        self.init(red: r, green: g, blue: b)
+    }
+}
+
 // MARK: - Spacing Tokens
 struct Spacing {
     let xs: CGFloat = 4    // gap-1
@@ -27,6 +44,7 @@ struct AppTheme {
     let text: Color
     let textSecondary: Color
     let accent: Color
+    let isDark: Bool
 
     let spacing: Spacing
     let corners: CornerRadius
@@ -38,7 +56,8 @@ struct AppTheme {
         secondary: Color = .gray,
         text: Color,
         textSecondary: Color,
-        accent: Color
+        accent: Color,
+        isDark: Bool = false
     ) {
         self.background = background
         self.cardBackground = cardBackground
@@ -47,8 +66,45 @@ struct AppTheme {
         self.text = text
         self.textSecondary = textSecondary
         self.accent = accent
+        self.isDark = isDark
         self.spacing = Spacing()
         self.corners = CornerRadius()
+    }
+
+    // MARK: - Camera UI Colors
+    /// Background color for camera header buttons (40x40 circular)
+    var cameraButtonBackground: Color {
+        isDark ? Color.white.opacity(0.1) : Color.black.opacity(0.05)
+    }
+
+    /// Icon color for camera header buttons
+    var cameraButtonIcon: Color {
+        isDark ? .white : .black
+    }
+
+    /// Color for shot indicator dots (filled and outlined)
+    var cameraIndicatorColor: Color {
+        isDark ? .white : .black
+    }
+
+    /// Color for countdown number display
+    var cameraCountdownColor: Color {
+        isDark ? .white : .black
+    }
+
+    /// Secondary color for camera UI (labels at 50% opacity)
+    var cameraSecondaryColor: Color {
+        isDark ? Color.white.opacity(0.5) : Color.black.opacity(0.5)
+    }
+
+    /// Background color for thumbnail number badges
+    var cameraThumbnailBadgeBg: Color {
+        isDark ? .white : .black
+    }
+
+    /// Text color for thumbnail number badges
+    var cameraThumbnailBadgeText: Color {
+        isDark ? .black : .white
     }
 }
 
@@ -62,7 +118,8 @@ extension AppTheme {
         secondary: Color.white.opacity(0.7),
         text: .white,
         textSecondary: Color.white.opacity(0.6),
-        accent: Color.white.opacity(0.1)
+        accent: Color.white.opacity(0.1),
+        isDark: true
     )
 
     /// Seoul Studio - Light gray theme with subtle contrast
@@ -101,4 +158,34 @@ extension Color {
     static let zinc700 = Color(hex: "#3f3f46")
     static let zinc800 = Color(hex: "#27272a")
     static let zinc900 = Color(hex: "#18181b")
+}
+
+// MARK: - Screen Header Component
+struct ScreenHeader: View {
+    let title: String
+    let subtitle: String?
+
+    init(_ title: String, subtitle: String? = nil) {
+        self.title = title
+        self.subtitle = subtitle
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(Typography.display(32, weight: .black))
+                .trackingTight()
+                .foregroundColor(.black)
+
+            if let subtitle = subtitle {
+                Text(subtitle)
+                    .font(Typography.body(14))
+                    .foregroundColor(.black.opacity(0.6))
+                    .multilineTextAlignment(.leading)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 24)
+        .padding(.top, 40)
+    }
 }

@@ -20,9 +20,6 @@ struct HomeScreen: View {
 
                 // Quick Actions
                 quickActionsSection
-
-                // Recent Gallery Preview
-                galleryPreview
             }
             .padding(theme.spacing.xl)
         }
@@ -61,7 +58,7 @@ struct HomeScreen: View {
 
                     HStack(alignment: .firstTextBaseline, spacing: theme.spacing.xs) {
                         Text("\(credits)")
-                            .font(.system(size: 48, weight: .bold, design: .rounded))
+                            .font(.system(size: 48, weight: .bold))
                             .foregroundColor(theme.text)
                         Text("credits")
                             .font(Typography.bodyLG)
@@ -112,7 +109,7 @@ struct HomeScreen: View {
         Button {
             if credits > 0 {
                 appState.startNewSession()
-                appState.navigate(to: .intervalSelection)
+                appState.navigate(to: .styleSelection)
             } else {
                 showInsufficientCredits = true
             }
@@ -132,13 +129,6 @@ struct HomeScreen: View {
     private var quickActionsSection: some View {
         HStack(spacing: theme.spacing.lg) {
             QuickActionCard(
-                icon: "photo.stack.fill",
-                title: "Gallery"
-            ) {
-                appState.navigate(to: .gallery)
-            }
-
-            QuickActionCard(
                 icon: "gift.fill",
                 title: "Refer"
             ) {
@@ -154,42 +144,6 @@ struct HomeScreen: View {
         }
     }
 
-    // MARK: - Gallery Preview
-
-    private var galleryPreview: some View {
-        VStack(alignment: .leading, spacing: theme.spacing.lg) {
-            HStack {
-                Text("Recent Creations")
-                    .font(Typography.displaySM)
-                    .foregroundColor(theme.text)
-                Spacer()
-                Button("See All") {
-                    appState.navigate(to: .gallery)
-                }
-                .font(Typography.bodyMD)
-                .foregroundColor(theme.text)
-            }
-
-            // Empty state
-            VStack(spacing: theme.spacing.md) {
-                Image(systemName: "photo.on.rectangle.angled")
-                    .font(.system(size: 40))
-                    .foregroundColor(theme.textSecondary.opacity(0.5))
-
-                Text("No photos yet")
-                    .font(Typography.bodyMD)
-                    .foregroundColor(theme.textSecondary)
-
-                Text("Start a photobooth session to create your first collage!")
-                    .font(Typography.bodySM)
-                    .foregroundColor(theme.textSecondary)
-                    .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 40)
-            .photoboothCard()
-        }
-    }
 }
 
 // MARK: - Quick Action Card
